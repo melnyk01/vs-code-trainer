@@ -74,11 +74,15 @@ const game = {
             }
         },
     ],
+    prevShortcut: '',
     currentShortcut: '',
     userCombination: {},
     isMatch: false,
     generateShortcut() {
-        this.currentShortcut = this.shortcutList[(Math.floor(Math.random() * this.shortcutList.length))]
+        while (this.prevShortcut === this.currentShortcut) {
+            this.currentShortcut = this.shortcutList[(Math.floor(Math.random() * this.shortcutList.length))]
+        }
+        this.prevShortcut = this.currentShortcut;
     },
 
     checkShortcut() {
@@ -88,6 +92,8 @@ const game = {
     },
     feedback() {
         if (game.isMatch) {
+            game.generateShortcut();
+            ui.displayShortcut();
             return "Nicely done!"
         } else return game.userCombination.key + " was pressed";
     }
