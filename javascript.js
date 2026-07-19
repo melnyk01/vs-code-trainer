@@ -1,13 +1,12 @@
 const ui =
 {
     mainContent: document.querySelector('.main-content'),
-    randomShortcutBtn: document.querySelector('#generate'),
+    randomShortcutBtn: document.querySelector('#random-shortcut'),
     feedback: document.querySelector('#feedback'),
-    h2: document.querySelector('#shortcut'),
+    shortcut: document.querySelector('#shortcut'),
     p: document.querySelector('#shortcut-instruction'),
-
     displayShortcut() {
-        this.h2.textContent = `Let's learn shortcut "${game.currentShortcut.action}"`;
+        this.shortcut.textContent = `Let's learn shortcut "${game.currentShortcut.action}"`;
         this.p.textContent = `Press ${game.currentShortcut.display}`;
 
     },
@@ -16,6 +15,11 @@ const ui =
         document.addEventListener('keydown', (event) => {
             game.userCombination.ctrl = event.ctrlKey;
             game.userCombination.key = event.key;
+            game.isMatch = game.checkShortcut();
+            if (game.isMatch) {
+                event.preventDefault()
+                this.feedback.style.color = "green";
+            } else this.feedback.style.color = "black"
             this.feedback.textContent = game.feedback()
         }
         );
@@ -72,15 +76,18 @@ const game = {
     ],
     currentShortcut: '',
     userCombination: {},
+    isMatch: false,
     generateShortcut() {
         this.currentShortcut = this.shortcutList[(Math.floor(Math.random() * this.shortcutList.length))]
     },
-    feedback() {
-        const isMatch = (
+
+    checkShortcut() {
+        return (
             this.currentShortcut.keys.ctrl === this.userCombination.ctrl &&
-            this.currentShortcut.keys.key === this.userCombination.key
-        )
-        if (isMatch) {
+            this.currentShortcut.keys.key === this.userCombination.key)
+    },
+    feedback() {
+        if (game.isMatch) {
             return "Nicely done!"
         } else return game.userCombination.key + " was pressed";
     }
