@@ -5,6 +5,7 @@ const ui =
     feedback: document.querySelector('#feedback'),
     shortcut: document.querySelector('#shortcut'),
     p: document.querySelector('#shortcut-instruction'),
+    shortcutSelect: document.querySelector('#shortcut-select'),
     displayShortcut() {
         this.shortcut.textContent = `Let's learn shortcut "${game.currentShortcut.action}"`;
         this.p.textContent = `Press ${game.currentShortcut.display}`;
@@ -29,9 +30,18 @@ const ui =
         })
     },
 
+    renderShortcutSelect() {
+        for (shortcut of game.shortcutList) {
+            const option = document.createElement('option');
+            option.textContent = shortcut.action + " | " + shortcut.category;
+            this.shortcutSelect.appendChild(option);
+        }
+    },
+
     init() {
         this.displayShortcut();
         this.eventListeners();
+        this.renderShortcutSelect();
     }
 }
 
@@ -41,6 +51,7 @@ const game = {
             id: 1,
             action: "Copy current line",
             display: "Ctrl+C",
+            category: "Editing",
             keys: {
                 ctrl: true,
                 key: "c",
@@ -50,6 +61,7 @@ const game = {
             id: 2,
             action: "Paste copied line",
             display: "Ctrl+V",
+            category: "Editing",
             keys: {
                 ctrl: true,
                 key: "v",
@@ -59,6 +71,7 @@ const game = {
             id: 3,
             action: "Select variable",
             display: "Ctrl+D",
+            category: "Editing",
             keys: {
                 ctrl: true,
                 key: "d"
@@ -68,21 +81,41 @@ const game = {
             id: 4,
             action: "Save file",
             display: "Ctrl+S",
+            category: "Saving",
             keys: {
                 ctrl: true,
                 key: "s",
             }
         },
+        {
+            id: 5,
+            action: "Go to file...",
+            display: "Ctrl+P",
+            category: "Navigating",
+            keys: {
+                ctrl: true,
+                key: "p",
+            }
+        },
+        {
+            id: 6,
+            action: "Go to line...",
+            display: "Ctrl+G",
+            category: "Navigating",
+            keys: {
+                ctrl: true,
+                key: "g",
+            }
+        },
     ],
-    prevShortcut: '',
     currentShortcut: '',
     userCombination: {},
     isMatch: false,
     generateShortcut() {
-        while (this.prevShortcut === this.currentShortcut) {
+        prevShortcut = this.currentShortcut;
+        while (this.currentShortcut === prevShortcut) {
             this.currentShortcut = this.shortcutList[(Math.floor(Math.random() * this.shortcutList.length))]
         }
-        this.prevShortcut = this.currentShortcut;
     },
 
     checkShortcut() {
