@@ -1,34 +1,34 @@
 const ui =
 {
     mainContent: document.querySelector('.main-content'),
-    generateBtn: (function () {
-        button = document.querySelector('#generate');
-        button.addEventListener('click', () => {
-            game.generateShortcut();
-            ui.displayShortcut();
-        });
-
-    })(),
+    randomShortcutBtn: document.querySelector('#generate'),
+    feedback: document.querySelector('#feedback'),
     h2: document.querySelector('#shortcut'),
     p: document.querySelector('#shortcut-instruction'),
 
     displayShortcut() {
-        this.h2.textContent = `Let's learn shortcut "${game.currentShortcut.action}"`
-        this.p.textContent = `Press ${game.currentShortcut.display}`
+        this.h2.textContent = `Let's learn shortcut "${game.currentShortcut.action}"`;
+        this.p.textContent = `Press ${game.currentShortcut.display}`;
+
     },
 
-    listenToInput() {
-        let userCombination = {};
-
+    eventListeners() {
         document.addEventListener('keydown', (event) => {
-            userCombination.ctrl = event.ctrlKey;
-            userCombination.key = event.key;
-            if (game.checkShortcut(game.currentShortcut, userCombination)) {
-                console.log("Nicely done!")
-            }
+            game.userCombination.ctrl = event.ctrlKey;
+            game.userCombination.key = event.key;
+            this.feedback.textContent = game.feedback()
         }
-        )
+        );
+        this.randomShortcutBtn.addEventListener('click', () => {
+            game.generateShortcut();
+            this.displayShortcut();
+        })
     },
+
+    init() {
+        this.displayShortcut();
+        this.eventListeners();
+    }
 }
 
 const game = {
@@ -71,21 +71,24 @@ const game = {
         },
     ],
     currentShortcut: '',
+    userCombination: {},
     generateShortcut() {
         this.currentShortcut = this.shortcutList[(Math.floor(Math.random() * this.shortcutList.length))]
     },
-    checkShortcut(shortcut, userCombination) {
-        return (
-            shortcut.keys.ctrl === userCombination.ctrl &&
-            shortcut.keys.key === userCombination.key
+    feedback() {
+        const isMatch = (
+            this.currentShortcut.keys.ctrl === this.userCombination.ctrl &&
+            this.currentShortcut.keys.key === this.userCombination.key
         )
+        if (isMatch) {
+            return "Nicely done!"
+        } else return game.userCombination.key + " was pressed";
     }
 }
 
 function play() {
     game.generateShortcut();
-    ui.displayShortcut();
-    ui.listenToInput();
+    ui.init();
 }
 
 play();
