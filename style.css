@@ -34,6 +34,18 @@ header {
     gap: 1rem;
 }
 
+.editor {
+    display: flex;
+    flex-direction: column;
+    width: 35rem;
+    height: 40%;
+    background-color: rgb(47, 47, 47);
+}
+
+.editor>div {
+    padding: 2%;
+}
+
 div#feedback {
     display: flex;
     font-size: 1.5rem;

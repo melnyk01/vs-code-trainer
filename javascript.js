@@ -6,6 +6,7 @@ const ui =
     shortcut: document.querySelector('#shortcut'),
     p: document.querySelector('#shortcut-instruction'),
     shortcutSelect: document.querySelector('#shortcut-select'),
+    editor: document.querySelector('.editor'),
     displayShortcut() {
         this.shortcut.textContent = `Let's learn shortcut "${game.currentShortcut.action}"`;
         this.p.textContent = `Press ${game.currentShortcut.display}`;
@@ -30,18 +31,34 @@ const ui =
         })
     },
 
-    renderShortcutSelect() {
-        for (shortcut of game.shortcutList) {
+    renderSelectShortcut() {
+        let prevShortcut = { category: '' };
+        for (const shortcut of game.shortcutList) {
+            const optgroup = document.createElement('optgroup');
+            optgroup.setAttribute('label', shortcut.category);
             const option = document.createElement('option');
             option.textContent = shortcut.action + " | " + shortcut.category;
+            if (shortcut.category !== prevShortcut.category) {
+                this.shortcutSelect.appendChild(optgroup);
+            }
             this.shortcutSelect.appendChild(option);
+            prevShortcut = shortcut
+        }
+    },
+
+    renderEditor() {
+        for (let line = 0; line <= game.shortcutList[2].examples.before.length; line++) {
+            const div = document.createElement('div');
+            div.textContent = game.shortcutList[2].examples.before[line];
+            this.editor.appendChild(div);
         }
     },
 
     init() {
         this.displayShortcut();
         this.eventListeners();
-        this.renderShortcutSelect();
+        this.renderSelectShortcut();
+        this.renderEditor()
     }
 }
 
@@ -75,6 +92,17 @@ const game = {
             keys: {
                 ctrl: true,
                 key: "d"
+            },
+            examples: {
+                before: [
+                    "const oldName = 'John;'",
+                    "console.log(oldName)",
+                ],
+                after: {
+                    line1: "const newName = 'John;'",
+                    line2: "console.log(newName)",
+                },
+                explanation: {},
             }
         },
         {
@@ -112,7 +140,7 @@ const game = {
     userCombination: {},
     isMatch: false,
     generateShortcut() {
-        prevShortcut = this.currentShortcut;
+        let prevShortcut = this.currentShortcut;
         while (this.currentShortcut === prevShortcut) {
             this.currentShortcut = this.shortcutList[(Math.floor(Math.random() * this.shortcutList.length))]
         }
