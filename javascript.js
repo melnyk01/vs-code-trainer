@@ -35,10 +35,11 @@ const ui =
         let prevShortcut = { category: '' };
         for (const shortcut of game.shortcutList) {
             const optgroup = document.createElement('optgroup');
-            optgroup.setAttribute('label', shortcut.category);
             const option = document.createElement('option');
             option.textContent = shortcut.action + " | " + shortcut.category;
             if (shortcut.category !== prevShortcut.category) {
+                optgroup.setAttribute('label', shortcut.category);
+
                 this.shortcutSelect.appendChild(optgroup);
             }
             this.shortcutSelect.appendChild(option);
@@ -46,10 +47,17 @@ const ui =
         }
     },
 
+    clearEditor() {
+        while (this.editor.lastChild) {
+            this.editor.removeChild(this.editor.lastChild);
+        }
+    },
+
     renderEditor() {
-        for (let line = 0; line <= game.shortcutList[2].examples.before.length; line++) {
+        this.clearEditor();
+        for (let line = 0; line < game.currentShortcut.examples.before.length; line++) {
             const div = document.createElement('div');
-            div.textContent = game.shortcutList[2].examples.before[line];
+            div.textContent = game.currentShortcut.examples.before[line];
             this.editor.appendChild(div);
         }
     },
@@ -72,7 +80,16 @@ const game = {
             keys: {
                 ctrl: true,
                 key: "c",
-            }
+            },
+            examples: {
+                before: [
+                    "No visual example for this shortcut yet."
+                ],
+                after: [
+                    "No visual example for this shortcut yet."
+                ],
+                explanation: [],
+            },
         },
         {
             id: 2,
@@ -82,7 +99,16 @@ const game = {
             keys: {
                 ctrl: true,
                 key: "v",
-            }
+            },
+            examples: {
+                before: [
+                    "No visual example for this shortcut yet."
+                ],
+                after: [
+                    "No visual example for this shortcut yet."
+                ],
+                explanation: [],
+            },
         },
         {
             id: 3,
@@ -113,7 +139,16 @@ const game = {
             keys: {
                 ctrl: true,
                 key: "s",
-            }
+            },
+            examples: {
+                before: [
+                    "No visual example for this shortcut yet."
+                ],
+                after: [
+                    "No visual example for this shortcut yet."
+                ],
+                explanation: [],
+            },
         },
         {
             id: 5,
@@ -123,7 +158,16 @@ const game = {
             keys: {
                 ctrl: true,
                 key: "p",
-            }
+            },
+            examples: {
+                before: [
+                    "No visual example for this shortcut yet."
+                ],
+                after: [
+                    "No visual example for this shortcut yet."
+                ],
+                explanation: [],
+            },
         },
         {
             id: 6,
@@ -133,7 +177,16 @@ const game = {
             keys: {
                 ctrl: true,
                 key: "g",
-            }
+            },
+            examples: {
+                before: [
+                    "No visual example for this shortcut yet."
+                ],
+                after: [
+                    "No visual example for this shortcut yet."
+                ],
+                explanation: [],
+            },
         },
     ],
     currentShortcut: '',
@@ -155,6 +208,7 @@ const game = {
         if (game.isMatch) {
             game.generateShortcut();
             ui.displayShortcut();
+            ui.renderEditor();
             return "Nicely done!"
         } else return game.userCombination.key + " was pressed";
     }
